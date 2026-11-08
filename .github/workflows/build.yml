@@ -1,0 +1,15 @@
+name: Build APK
+on: [push, workflow_dispatch]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: for z in *.zip; do unzip -qo "$z"; done
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 17 }
+      - uses: gradle/actions/setup-gradle@v3
+        with: { gradle-version: 8.7 }
+      - run: cd MusicViz && gradle assembleDebug
+      - uses: actions/upload-artifact@v4
+        with: { name: MusicViz-apk, path: MusicViz/app/build/outputs/apk/debug/app-debug.apk }
